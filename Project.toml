@@ -1,0 +1,4 @@
+name = "Gomagorithm"
+uuid = "0ff98a28-d9dc-4d3b-82cc-214b593b0cda"
+authors = ["Satoshi Terasaki <terasakisatoshi.math@gmail.com>"]
+version = "0.1.0"
