@@ -1,5 +1,5 @@
 module Gomagorithm
 
-greet() = print("Hello World!")
+include("SOneTo.jl")
 
 end # module
