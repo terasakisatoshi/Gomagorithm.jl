@@ -1,0 +1,45 @@
+version: '3'
+services:
+  jupyter:
+    image: gomagorithm
+    container_name: gomagorithm-jupyter
+    volumes:
+      - ./:/work
+    working_dir: /work
+    ports:
+      - "8888:8888"
+    command: jupyter notebook --notebook-dir /work --ip=0.0.0.0 --allow-root
+  lab:
+    image: gomagorithm
+    container_name: gomagorithm-lab
+    volumes:
+      - ./:/work
+    working_dir: /work
+    ports:
+      - "8888:8888"
+    command: jupyter lab --notebook-dir /work --ip=0.0.0.0 --allow-root
+  julia:
+    image: gomagorithm
+    container_name: gomagorithm-julia
+    volumes:
+      - ./:/work
+    working_dir: /work
+    command: julia --project=/work
+  web:
+    image: gomagorithm
+    container_name: gomagorithm-packagedocs
+    volumes:
+      - ./:/work
+    working_dir: /work
+    ports:
+      - "8000:8000"
+    command: make web
+  pluto:
+    image: gomagorithm
+    container_name: gomagorithm-pluto
+    volumes:
+      - ./:/work
+    working_dir: /work
+    ports:
+      - "9999:9999"
+    command: julia -e 'import Pluto; Pluto.run("0.0.0.0", 9999)'
