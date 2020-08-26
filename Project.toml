@@ -2,3 +2,6 @@ name = "Gomagorithm"
 uuid = "0ff98a28-d9dc-4d3b-82cc-214b593b0cda"
 authors = ["Satoshi Terasaki <terasakisatoshi.math@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
