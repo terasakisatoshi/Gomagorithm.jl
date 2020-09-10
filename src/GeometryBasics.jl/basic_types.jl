@@ -7,7 +7,7 @@
 #       format_version: '1.5'
 #       jupytext_version: 1.5.2
 #   kernelspec:
-#     display_name: Julia 1.5.0-rc2
+#     display_name: Julia 1.5.0
 #     language: julia
 #     name: julia-1.5
 # ---
@@ -41,3 +41,14 @@ abstract type AbstractNgonFace{N, T} <: AbstractFace{N, T} end
 """
 Face index, connecting points to form a simplex
 """
+
+@fixed_vector Simplex AbstractSimplexFace
+const TetrahedronFace{T} = SimplexFace{4, T}
+Face(::Type{<: SimplexFace{N}}, ::Type{T}) where {N, T} = SimplexFace{N, T}
+
+@fixed_vector NgonFace AbstractNgonFace
+const LineFace{T} = NgonFace{2, T}
+const TriangleFace{T} = NgonFace{3, T}
+const QuadFace{T} = NgonFace{4,T}
+
+
