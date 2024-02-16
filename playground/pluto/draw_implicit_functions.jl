@@ -6,11 +6,11 @@ using InteractiveUtils
 
 # ╔═╡ 5cf8e83f-6f01-4733-b13f-38976603301b
 begin
-	using OrdinaryDiffEq
-	using DiffEqBase
-	using ImplicitEquations
-	using ForwardDiff
-	using Plots
+    using OrdinaryDiffEq
+    using DiffEqBase
+    using ImplicitEquations
+    using ForwardDiff
+    using Plots
 end
 
 # ╔═╡ 560977e3-09ed-48d1-9f3e-1adc999127ec
@@ -40,12 +40,12 @@ C_f = \{(x,y) \mid f(x, y) = 0\}
 
 # ╔═╡ 8140ad0c-26a1-42af-801e-fb6703151470
 begin
-	f(x, y) = x^3 + x^2 - y^2
-	f(xy::AbstractVector) = f(xy[begin], xy[end])
+    f(x, y) = x^3 + x^2 - y^2
+    f(xy::AbstractVector) = f(xy[begin], xy[end])
 end
 
 # ╔═╡ 4d4f3e61-2e5f-4759-9b0f-0cac36441c60
-plot(Eq(f, 0), aspect_ratio=:equal, xlim=[-1.5, 1], ylim=[-1, 1])
+plot(Eq(f, 0), aspect_ratio = :equal, xlim = [-1.5, 1], ylim = [-1, 1])
 
 # ╔═╡ d5140e42-b735-4e4d-97ac-97ed8f97cd42
 md"""
@@ -142,8 +142,8 @@ md"""
 
 # ╔═╡ a5a9597d-9270-49ac-8824-d2bfb1012e24
 begin
-	∇f(xy::AbstractVector) = ForwardDiff.gradient(f, xy)
-	∇f(x, y) = ∇f([x, y])
+    ∇f(xy::AbstractVector) = ForwardDiff.gradient(f, xy)
+    ∇f(x, y) = ∇f([x, y])
 end
 
 # ╔═╡ 62896202-2e3e-4921-ae4d-adabfd3cb740
@@ -153,10 +153,10 @@ md"""
 
 # ╔═╡ e2f69e55-e828-4d90-b175-d6b1ed583ea3
 let
-	x = rand()
-	y = rand()
-	@assert all(∇f([x, y]) .≈ (3x^2 + 2x, -2y))
-	@assert all(∇f(x, y) .≈ (3x^2 + 2x, -2y))
+    x = rand()
+    y = rand()
+    @assert all(∇f([x, y]) .≈ (3x^2 + 2x, -2y))
+    @assert all(∇f(x, y) .≈ (3x^2 + 2x, -2y))
 end
 
 # ╔═╡ 1290a6fa-978f-4b62-8370-1fac74d01114
@@ -166,8 +166,8 @@ md"""
 
 # ╔═╡ 4a5c4e81-51df-4872-82be-785039201ba8
 begin
-	φ₊(x) = x√(x + 1)
-	φ₋(x) = -x√(x + 1)
+    φ₊(x) = x√(x + 1)
+    φ₋(x) = -x√(x + 1)
 end
 
 # ╔═╡ 67fd6c41-1861-47c0-acdb-10a7b8ff3573
@@ -183,8 +183,8 @@ md"""
 
 # ╔═╡ a64a2b9c-743e-4f96-a0fb-7fdd313a8fd5
 function update(φ, ∇f, x)
-	fx, fy = ∇f(x, φ)
-	-fx/fy
+    fx, fy = ∇f(x, φ)
+    -fx / fy
 end
 
 # ╔═╡ 624baeb4-33de-41aa-8003-1d3198e739ff
@@ -202,42 +202,42 @@ sol = solve(prob, Tsit5())
 
 # ╔═╡ 58d1ad33-72a4-41ce-a509-648a3c236632
 begin
-	p = plot(title="\$x^3 + x^2 - y^2 = 0\$", aspect_ratio=:equal)
+    p = plot(title = "\$x^3 + x^2 - y^2 = 0\$", aspect_ratio = :equal)
 
-	x_init = -0.9999
-	x_final = -0.001
-	φ_init = φ₊(x_init) 
-	xspan = (x_init, x_final)
-	prob = ODEProblem(update, φ_init, xspan, ∇f)
-	sol₊1 = solve(prob, Tsit5())
-	plot!(p, x_init:0.01:x_final, sol₊1.(x_init:0.01:x_final), label="sol₊1")
+    x_init = -0.9999
+    x_final = -0.001
+    φ_init = φ₊(x_init)
+    xspan = (x_init, x_final)
+    prob = ODEProblem(update, φ_init, xspan, ∇f)
+    sol₊1 = solve(prob, Tsit5())
+    plot!(p, x_init:0.01:x_final, sol₊1.(x_init:0.01:x_final), label = "sol₊1")
 
-	x_init = 0.001
-	x_final = 1.
-	φ_init = φ₊(x_init) 
-	xspan = (x_init, x_final)
-	prob = ODEProblem(update, φ_init, xspan, ∇f)
-	sol₊2 = solve(prob, Tsit5())
-	plot!(p, x_init:0.01:x_final, sol₊2.(x_init:0.01:x_final), label="sol₊2")
-	
-	x_init = -0.9999
-	x_final = -0.001
-	φ_init = φ₋(x_init) 
-	xspan = (x_init, x_final)
-	prob = ODEProblem(update, φ_init, xspan, ∇f)
-	sol₋1 = solve(prob, Tsit5())
-	plot!(p, x_init:0.01:x_final, sol₋1.(x_init:0.01:x_final), label="sol₋1")
+    x_init = 0.001
+    x_final = 1.0
+    φ_init = φ₊(x_init)
+    xspan = (x_init, x_final)
+    prob = ODEProblem(update, φ_init, xspan, ∇f)
+    sol₊2 = solve(prob, Tsit5())
+    plot!(p, x_init:0.01:x_final, sol₊2.(x_init:0.01:x_final), label = "sol₊2")
 
-	x_init = 0.001
-	x_final = 1.
-	φ_init = φ₋(x_init) 
-	xspan = (x_init, x_final)
-	prob = ODEProblem(update, φ_init, xspan, ∇f)
-	sol₋2 = solve(prob, Tsit5())
-	plot!(p, x_init:0.01:x_final, sol₋2.(x_init:0.01:x_final), label="sol₋2")
+    x_init = -0.9999
+    x_final = -0.001
+    φ_init = φ₋(x_init)
+    xspan = (x_init, x_final)
+    prob = ODEProblem(update, φ_init, xspan, ∇f)
+    sol₋1 = solve(prob, Tsit5())
+    plot!(p, x_init:0.01:x_final, sol₋1.(x_init:0.01:x_final), label = "sol₋1")
 
-	scatter!(p, [0],[0], markershape=:+, label="singular point")
-	p
+    x_init = 0.001
+    x_final = 1.0
+    φ_init = φ₋(x_init)
+    xspan = (x_init, x_final)
+    prob = ODEProblem(update, φ_init, xspan, ∇f)
+    sol₋2 = solve(prob, Tsit5())
+    plot!(p, x_init:0.01:x_final, sol₋2.(x_init:0.01:x_final), label = "sol₋2")
+
+    scatter!(p, [0], [0], markershape = :+, label = "singular point")
+    p
 end
 
 # ╔═╡ 6d7c4869-201d-497f-846c-80ea29a655ce
@@ -269,36 +269,36 @@ prob は sol を構成する際に用いた ODEProblem オブジェクトであ�
 
 # ╔═╡ 4e497972-532a-4713-a28c-171db38cffcf
 begin
-	plot()
-	sol1 = sol₊1
-	sol2 = sol₊2
-	DiffEqBase.build_solution(
-		let
-			x_init = -0.999
-			x_final = 1.
-			φ_init = φ₊(x_init) 
-			xspan = (x_init, x_final)
-			prob = ODEProblem(update, φ_init, xspan, ∇f)
-		end,
-		Tsit5(),
-		vcat(sol1.t, sol2.t),
-		vcat(sol1.u, sol2.u)
-	) |> plot!
+    plot()
+    sol1 = sol₊1
+    sol2 = sol₊2
+    DiffEqBase.build_solution(
+        let
+            x_init = -0.999
+            x_final = 1.0
+            φ_init = φ₊(x_init)
+            xspan = (x_init, x_final)
+            prob = ODEProblem(update, φ_init, xspan, ∇f)
+        end,
+        Tsit5(),
+        vcat(sol1.t, sol2.t),
+        vcat(sol1.u, sol2.u),
+    ) |> plot!
 
-	sol1 = sol₋1
-	sol2 = sol₋2
-	DiffEqBase.build_solution(
-		let
-			x_init = -0.999
-			x_final = 1.
-			φ_init = φ₋(x_init) 
-			xspan = (x_init, x_final)
-			prob = ODEProblem(update, φ_init, xspan, ∇f)
-		end,
-		Tsit5(),
-		vcat(sol1.t, sol2.t),
-		vcat(sol1.u, sol2.u)
-	) |> plot!
+    sol1 = sol₋1
+    sol2 = sol₋2
+    DiffEqBase.build_solution(
+        let
+            x_init = -0.999
+            x_final = 1.0
+            φ_init = φ₋(x_init)
+            xspan = (x_init, x_final)
+            prob = ODEProblem(update, φ_init, xspan, ∇f)
+        end,
+        Tsit5(),
+        vcat(sol1.t, sol2.t),
+        vcat(sol1.u, sol2.u),
+    ) |> plot!
 end
 
 # ╔═╡ 509ea044-c328-4faf-8bbd-3586d7e176c4
@@ -324,24 +324,24 @@ https://twitter.com/genkuroki/status/1662913853712379905?s=20
 
 # ╔═╡ 11270a29-3b02-4644-a4f5-d8f215cf021d
 let
-	# @genkuroki 
-	# https://twitter.com/genkuroki/status/1662913853712379905?s=20 
-	# からこのノートブック上で動かすように修正したもの
-	p = plot(legend=false, aspect_ratio=:equal)
-	f1(t) = t^2 - 1
-	g1(t) = t * f1(t)
-	ts = range(-√2, √2, 1000)
-	plot!(p, f1.(ts), g1.(ts))
+    # @genkuroki 
+    # https://twitter.com/genkuroki/status/1662913853712379905?s=20 
+    # からこのノートブック上で動かすように修正したもの
+    p = plot(legend = false, aspect_ratio = :equal)
+    f1(t) = t^2 - 1
+    g1(t) = t * f1(t)
+    ts = range(-√2, √2, 1000)
+    plot!(p, f1.(ts), g1.(ts))
 end
 
 # ╔═╡ d965213b-792d-49f3-be9b-c147363e5f61
 let
-	# @genkuroki 
-	# https://twitter.com/genkuroki/status/1662913853712379905?s=20 
-	# からこのノートブック上で動かすように修正したもの
-	p = plot(legend=false, aspect_ratio=:equal)
-	xs, ys = -2:0.01:2, -1.4:0.01:1.4
-	contour(xs, ys, f, levels=[0,0])
+    # @genkuroki 
+    # https://twitter.com/genkuroki/status/1662913853712379905?s=20 
+    # からこのノートブック上で動かすように修正したもの
+    p = plot(legend = false, aspect_ratio = :equal)
+    xs, ys = -2:0.01:2, -1.4:0.01:1.4
+    contour(xs, ys, f, levels = [0, 0])
 end
 
 # ╔═╡ b431cc90-7c0d-422b-9b43-cf7819e5d4b9
