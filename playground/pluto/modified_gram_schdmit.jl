@@ -4,19 +4,19 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 1142a7e1-6d83-4746-a602-c812512f2bc5
+# ╔═╡ f1d2f741-7774-460c-87e7-9b2f2cfa3d9f
 begin
 	# Extras
-    using Test
-    using StableRNGs
+	using Test
+	using StableRNGs
 end
 
-# ╔═╡ 6c0552e8-cb9c-11ee-3e7f-3be38a736c2f
+# ╔═╡ f786af1c-bb14-482b-8d6c-cf204f2d71da
 md"""
-# 古典的グラムシュミットの直交化法
+# 修正グラムシュミットの直交化
 """
 
-# ╔═╡ a5978b5d-e211-4f5d-9c55-6eb4e7af3fc5
+# ╔═╡ 18c479b4-c714-472b-abad-b03cc6afb206
 begin
     function innerproduct(a::AbstractVector, b::AbstractVector)
         s = zero(eltype(a))
@@ -29,7 +29,7 @@ begin
     norm(a::AbstractVector) = √(a ⋅ a)
 end
 
-# ╔═╡ 539319ce-ca4d-4de7-8469-e896b589c690
+# ╔═╡ 393e5b2d-c126-4827-9d91-b0539dfc02f1
 begin
     @testset "innerproduct" begin
         rng = StableRNG(999)
@@ -53,44 +53,41 @@ begin
     nothing
 end
 
-# ╔═╡ 3ff41189-0b8f-459d-87af-2d927cba6d4c
-struct ClassicalGramSchmidt end # Algorithm
+# ╔═╡ 532c14fe-bede-46b5-8888-a7045fd8d93c
+struct ModifiedGramSchmidt end # Algorithm
 
-# ╔═╡ 24a69ae7-2574-4e35-bb4b-9ccb72b42521
-function orthonormalize(::Type{ClassicalGramSchmidt}, A)
-    a⃗₁ = A[:, 1]
+# ╔═╡ 40e2ae0c-d2af-11ee-31c9-dfa8f7798362
+function orthonormalize(::Type{ModifiedGramSchmidt}, A)
+	a₁ = A[:, 1]
 	m = size(A, 2)
-    r₁₁ = norm(a⃗₁)
+	r₁₁ = norm(a₁)
+	q₁ = a₁ / r₁₁
 	Q = similar(A)
 	R = similar(A, m, m)
-    q⃗₁ = a⃗₁ / r₁₁
-	Q[:, 1] = q⃗₁
+	Q[:, 1] .= q₁
 	R[1,1] = r₁₁
-    for n = 1:(size(A, 2)-1)
-        a⃗ₙ₊₁ = @view A[:, n+1]
-        q⃗̃ₙ₊₁ = zero(a⃗ₙ₊₁)
-        for i = 1:n
-            q⃗ᵢ = @view Q[:, i]
-            rᵢ₍ₙ₊₁₎ = q⃗ᵢ ⋅ a⃗ₙ₊₁
+	for n in 1:(m-1)
+		aₙ₊₁ = @view A[:, n+1]
+		for i in 1:n
+			qᵢ = @view Q[:, i]
+			rᵢ₍ₙ₊₁₎ = qᵢ ⋅ aₙ₊₁
 			R[i, n+1] = rᵢ₍ₙ₊₁₎
-            q⃗̃ₙ₊₁ -= rᵢ₍ₙ₊₁₎ * q⃗ᵢ
-        end
-        q⃗̃ₙ₊₁ += a⃗ₙ₊₁
-        r₍ₙ₊₁₎₍ₙ₊₁₎ = norm(q⃗̃ₙ₊₁)
+			@. aₙ₊₁ = aₙ₊₁ - rᵢ₍ₙ₊₁₎ * qᵢ
+		end
+		r₍ₙ₊₁₎₍ₙ₊₁₎ = norm(aₙ₊₁)
 		R[n+1,n+1] = r₍ₙ₊₁₎₍ₙ₊₁₎
-        q⃗ₙ₊₁ = q⃗̃ₙ₊₁ / r₍ₙ₊₁₎₍ₙ₊₁₎
-		Q[:, n+1] .= q⃗ₙ₊₁
-    end
-    Q, R
+		qₙ₊₁ = aₙ₊₁ / r₍ₙ₊₁₎₍ₙ₊₁₎
+		Q[:, n+1] .= qₙ₊₁
+	end
+	Q, R
 end
 
-# ╔═╡ dc268e9b-b2ca-4143-abe9-5beb87f4f723
-@testset "ClassicalGramSchmidt" begin
+# ╔═╡ bee5f314-e6dd-48bb-8a57-d12b4d289032
+@testset "ModifiedGramSchmidt" begin
     rng = StableRNG(123)
-
     A = rand(rng, 10, 10)
 
-    Q, R = orthonormalize(ClassicalGramSchmidt, copy(A))
+    Q, R = orthonormalize(ModifiedGramSchmidt, copy(A))
 	@test A ≈ Q*R
 	q1 = Q[:, 1]
 	q2 = Q[:, 2]
@@ -164,12 +161,12 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 """
 
 # ╔═╡ Cell order:
-# ╟─6c0552e8-cb9c-11ee-3e7f-3be38a736c2f
-# ╠═1142a7e1-6d83-4746-a602-c812512f2bc5
-# ╠═a5978b5d-e211-4f5d-9c55-6eb4e7af3fc5
-# ╠═539319ce-ca4d-4de7-8469-e896b589c690
-# ╠═3ff41189-0b8f-459d-87af-2d927cba6d4c
-# ╠═24a69ae7-2574-4e35-bb4b-9ccb72b42521
-# ╠═dc268e9b-b2ca-4143-abe9-5beb87f4f723
+# ╟─f786af1c-bb14-482b-8d6c-cf204f2d71da
+# ╠═f1d2f741-7774-460c-87e7-9b2f2cfa3d9f
+# ╠═18c479b4-c714-472b-abad-b03cc6afb206
+# ╠═393e5b2d-c126-4827-9d91-b0539dfc02f1
+# ╠═532c14fe-bede-46b5-8888-a7045fd8d93c
+# ╠═40e2ae0c-d2af-11ee-31c9-dfa8f7798362
+# ╠═bee5f314-e6dd-48bb-8a57-d12b4d289032
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
