@@ -1,3 +1,3 @@
 # Gomagorithm
 
-clone of StaticArrays.jl
+Collect some algorithms based on LinearAlgebra
